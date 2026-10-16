@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Dearest | A Special Confession ❤️</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Sacramento&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+        .font-handwriting {
+            font-family: 'Sacramento', cursive;
+        }
+
+        /* Ambient Glassmorphism Styles */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Dodge Button smooth movement */
+        .dodge-btn {
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Floating background canvas */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(254, 226, 226, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f43f5e;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-100 via-pink-100 to-red-50 min-h-screen text-slate-800 relative overflow-x-hidden">
+
+    <!-- Floating Background Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Top Navigation Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 p-4">
+        <div class="max-w-6xl mx-auto glass-card rounded-2xl px-6 py-3 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl animate-pulse">💖</span>
+                <span class="font-cursive text-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-500 bg-clip-text text-transparent">Forever & Always</span>
+            </div>
+            
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold uppercase tracking-wider text-slate-600">
+                <a href="#hero" class="hover:text-rose-600 transition">Question</a>
+                <a href="#reasons" class="hover:text-rose-600 transition">100 Reasons</a>
+                <a href="#quiz" class="hover:text-rose-600 transition">Love Quiz</a>
+            </nav>
+
+            <button id="musicToggle" class="glass-card px-3 py-1.5 rounded-full text-xs font-medium text-rose-600 hover:bg-rose-50 transition flex items-center gap-2 border border-rose-200">
+                <i class="fa-solid fa-music text-sm"></i>
+                <span id="musicStatus">Play Melody</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="relative z-10 pt-24 pb-16 px-4 max-w-6xl mx-auto space-y-16">
+
+        <!-- ================= HERO SECTION / CONFESSION ================= -->
+        <section id="hero" class="min-h-[80vh] flex flex-col items-center justify-center text-center">
+            <div class="glass-card max-w-2xl w-full rounded-3xl p-8 md:p-12 shadow-2xl relative border-2 border-rose-200/60 transform hover:scale-[1.005] transition">
+                
+                <div class="inline-block p-4 rounded-full bg-rose-100/80 mb-6 shadow-inner animate-bounce">
+                    <i class="fa-solid fa-heart text-4xl text-rose-500"></i>
+                </div>
+
+                <h1 class="text-3xl md:text-5xl font-extrabold text-slate-800 mb-4 tracking-tight">
+                    Hey Beautiful, <span class="font-cursive text-rose-600 text-4xl md:text-6xl block mt-1">I Have A Question For You...</span>
+                </h1>
+
+                <p class="text-slate-600 text-sm md:text-base max-w-md mx-auto mb-8 leading-relaxed">
+                    Out of all the people in the world, my heart chose you. Will you make me the happiest person and be my girlfriend?
+                </p>
+
+                <!-- Interactive Choice Buttons -->
+                <div class="relative min-h-[120px] flex items-center justify-center gap-6 mt-4">
+                    <button id="yesBtn" onclick="acceptProposal()" class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-4 px-10 rounded-full shadow-lg shadow-rose-300/60 text-lg transition-all transform hover:scale-105 active:scale-95 flex items-center gap-2 z-20">
+                        <span>YES! Absolutely!</span> <i class="fa-solid fa-heart"></i>
+                    </button>
+
+                    <button id="noBtn" onmouseover="dodgeButton()" onclick="dodgeButton()" class="dodge-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-4 px-8 rounded-full shadow transition-all text-lg z-20">
+                        No 😢
+                    </button>
+                </div>
+
+                <!-- Secret Celebration Popup (Shown when YES is clicked) -->
+                <div id="celebrationCard" class="hidden mt-8 p-6 bg-gradient-to-r from-rose-500 to-pink-500 text-white rounded-2xl shadow-xl space-y-3 animate-fade-in">
+                    <h2 class="text-3xl font-cursive font-bold">You Said YES! 🎉💖</h2>
+                    <p class="text-sm text-rose-100 leading-relaxed">
+                        This is the happiest day of my life! Scroll down to explore 100 reasons why I adore you and test your knowledge on our love story!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 100 REASONS WHY I LOVE YOU ================= -->
+        <section id="reasons" class="space-y-8 scroll-mt-24">
+            <div class="text-center space-y-3 max-w-2xl mx-auto">
+                <span class="px-4 py-1.5 rounded-full bg-rose-200/60 text-rose-700 text-xs font-bold uppercase tracking-widest">
+                    Reasons Count: 100
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">100 Reasons Why I Love You</h2>
+                <p class="text-slate-600 text-sm">
+                    Every single day I find a new reason to fall deeper in love with you. Here are 100 of my favorites.
+                </p>
+            </div>
+
+            <!-- Toolbar: Search, Filter & Random Reason Button -->
+            <div class="glass-card p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
+                <!-- Search Bar -->
+                <div class="relative w-full md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="reasonSearch" onkeyup="filterReasons()" placeholder="Search reasons..." class="w-full pl-10 pr-4 py-2 bg-white/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-400">
+                </div>
+
+                <!-- Category Filters -->
+                <div class="flex flex-wrap items-center gap-2 overflow-x-auto w-full md:w-auto py-1">
+                    <button onclick="setCategory('All')" class="cat-btn bg-rose-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">All (100)</button>
+                    <button onclick="setCategory('Your Smile')" class="cat-btn bg-white/80 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition">Smile & Beauty</button>
+                    <button onclick="setCategory('Your Heart')" class="cat-btn bg-white/80 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition">Your Heart</button>
+                    <button onclick="setCategory('Little Things')" class="cat-btn bg-white/80 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition">Little Things</button>
+                    <button onclick="setCategory('Our Future')" class="cat-btn bg-white/80 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition">Our Future</button>
+                </div>
+
+                <!-- Randomizer Button -->
+                <button onclick="pickRandomReason()" class="w-full md:w-auto bg-gradient-to-r from-rose-500 to-pink-500 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hover:opacity-90 transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-shuffle"></i> Random Reason
+                </button>
+            </div>
+
+            <!-- Hearted Counter Indicator -->
+            <div class="flex justify-between items-center text-xs text-slate-500 font-medium px-2">
+                <span>Showing <strong id="visibleCount" class="text-rose-600">100</strong> reasons</span>
+                <span class="flex items-center gap-1"><i class="fa-solid fa-heart text-rose-500"></i> Hearted: <strong id="heartedCount" class="text-slate-800">0</strong></span>
+            </div>
+
+            <!-- Reasons Grid -->
+            <div id="reasonsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </section>
+
+        <!-- ================= 5-QUESTION LOVE QUIZ ================= -->
+        <section id="quiz" class="space-y-8 scroll-mt-24">
+            <div class="text-center space-y-3 max-w-2xl mx-auto">
+                <span class="px-4 py-1.5 rounded-full bg-pink-200/60 text-pink-700 text-xs font-bold uppercase tracking-widest">
+                    Love Quiz
+                </span>
+                <h2 class="text-3xl md:text-4xl font-bold text-slate-800">How Well Do You Know Our Love?</h2>
+                <p class="text-slate-600 text-sm">
+                    Answer these 5 quick questions about me and my love for you to unlock a romantic message!
+                </p>
+            </div>
+
+            <div class="glass-card max-w-3xl mx-auto rounded-3xl p-6 md:p-10 shadow-xl relative border border-rose-200">
+                <!-- Quiz Progress Bar -->
+                <div class="w-full bg-slate-200 h-2.5 rounded-full mb-8 overflow-hidden">
+                    <div id="quizProgressBar" class="bg-gradient-to-r from-rose-500 to-pink-500 h-full w-[20%] transition-all duration-300"></div>
+                </div>
+
+                <!-- Question Container -->
+                <div id="quizContent">
+                    <div class="flex items-center justify-between mb-4">
+                        <span id="questionNum" class="text-xs font-bold uppercase tracking-wider text-rose-500">Question 1 of 5</span>
+                        <span id="scoreDisplay" class="text-xs font-semibold text-slate-500"><i class="fa-solid fa-star text-amber-400"></i> Score: 0</span>
+                    </div>
+
+                    <h3 id="questionText" class="text-xl md:text-2xl font-bold text-slate-800 mb-6">
+                        <!-- Dynamic Question -->
+                    </h3>
+
+                    <div id="optionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Dynamic Options -->
+                    </div>
+                </div>
+
+                <!-- Quiz Completion Card (Hidden initially) -->
+                <div id="quizResultCard" class="hidden text-center space-y-6 py-6">
+                    <div class="w-20 h-20 rounded-full bg-rose-100 mx-auto flex items-center justify-center text-rose-500 text-4xl shadow-inner animate-bounce">
+                        👑
+                    </div>
+                    <h3 class="text-3xl font-bold font-cursive text-rose-600">Quiz Completed!</h3>
+                    <p id="quizScoreMessage" class="text-slate-600 text-sm max-w-md mx-auto leading-relaxed"></p>
+                    
+                    <div class="p-6 bg-white/80 rounded-2xl border border-rose-200 text-left space-y-3 shadow-inner">
+                        <h4 class="text-xs font-bold uppercase tracking-wider text-rose-500 flex items-center gap-2">
+                            <i class="fa-solid fa-envelope-open-text"></i> Secret Message Unlocked:
+                        </h4>
+                        <p class="font-handwriting text-2xl text-slate-800 leading-snug">
+                            "You are the best thing that ever happened to me. Every question in my life led me right to you, and saying 'I love you' will never be enough to express how deep my love is."
+                        </p>
+                    </div>
+
+                    <button onclick="resetQuiz()" class="bg-slate-800 text-white text-xs font-semibold px-6 py-3 rounded-full hover:bg-slate-900 transition">
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="text-center pt-8 border-t border-rose-200/60 text-xs text-slate-500 space-y-2">
+            <p class="font-cursive text-xl text-rose-600 font-bold">Made with endless love, just for you ❤️</p>
+            <p>© Forever & Always. You are my world.</p>
+        </footer>
+
+    </main>
+
+    <!-- Random Reason Modal Popup -->
+    <div id="reasonModal" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-3xl p-8 text-center space-y-4 shadow-2xl relative border-2 border-rose-300 transform scale-95 transition-all">
+            <button onclick="closeReasonModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center text-rose-500 mx-auto text-xl">
+                <i class="fa-solid fa-quote-left"></i>
+            </div>
+
+            <span id="modalCategory" class="text-xs font-bold text-rose-500 uppercase tracking-widest">Reason #12</span>
+            
+            <p id="modalReasonText" class="text-lg font-bold text-slate-800 leading-snug font-cursive text-2xl">
+                "Your laugh is my favorite sound in the whole universe."
+            </p>
+
+            <button onclick="closeReasonModal()" class="bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs px-6 py-2.5 rounded-full transition shadow">
+                Sweet! Next Reason
+            </button>
+        </div>
+    </div>
+
+    <!-- AUDIO PLAYER (Embedded royalty-free background tune) -->
+    <audio id="bgAudio" loop preload="none">
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-113576.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        // --- 100 REASONS DATA ARRAY ---
+        const reasonsData = [
+            // Your Smile / Beauty (1-20)
+            { id: 1, category: "Your Smile", text: "The way your eyes crinkle when you laugh deeply." },
+            { id: 2, category: "Your Smile", text: "How your smile can brighten up even my darkest days instantly." },
+            { id: 3, category: "Your Smile", text: "Your natural, effortless beauty every morning." },
+            { id: 4, category: "Your Smile", text: "The cute face you make when you are concentrating." },
+            { id: 5, category: "Your Smile", text: "How soft your voice sounds when you talk softly to me." },
+            { id: 6, category: "Your Smile", text: "The sparkle in your eyes whenever you talk about something you love." },
+            { id: 7, category: "Your Smile", text: "How stunning you look even in plain cozy pajamas." },
+            { id: 8, category: "Your Smile", text: "Your adorable giggles when I tell silly jokes." },
+            { id: 9, category: "Your Smile", text: "The way you fix your hair when you think I'm not looking." },
+            { id: 10, category: "Your Smile", text: "Your peaceful expression when you sleep." },
+            { id: 11, category: "Your Smile", text: "How incredibly photogenic your genuine smile is." },
+            { id: 12, category: "Your Smile", text: "The way your hand feels perfectly warm in mine." },
+            { id: 13, category: "Your Smile", text: "Your blush whenever I compliment you genuinely." },
+            { id: 14, category: "Your Smile", text: "How your presence commands warmth and elegance in every room." },
+            { id: 15, category: "Your Smile", text: "The way you look at me like I am the only person there." },
+            { id: 16, category: "Your Smile", text: "How cute you look when you get sleepy." },
+            { id: 17, category: "Your Smile", text: "Your unique fashion style that fits you so well." },
+            { id: 18, category: "Your Smile", text: "The gentle warmth of your hugs that melts all stress away." },
+            { id: 19, category: "Your Smile", text: "How your laughter is genuinely my favorite song." },
+            { id: 20, category: "Your Smile", text: "Your sweet scent that lingers on my hoodies." },
+
+            // Your Heart / Soul (21-45)
+            { id: 21, category: "Your Heart", text: "Your endless empathy for others." },
+            { id: 22, category: "Your Heart", text: "How kind and gentle you are to animals." },
+            { id: 23, category: "Your Heart", text: "Your patience with me even when I make silly mistakes." },
+            { id: 24, category: "Your Heart", text: "How deeply you care for your family and loved ones." },
+            { id: 25, category: "Your Heart", text: "Your emotional intelligence and understanding nature." },
+            { id: 26, category: "Your Heart", text: "How honest and genuine you are with your feelings." },
+            { id: 27, category: "Your Heart", text: "Your strength during tough moments." },
+            { id: 28, category: "Your Heart", text: "The way you forgive easily and choose love over anger." },
+            { id: 29, category: "Your Heart", text: "How passionate you are about your goals." },
+            { id: 30, category: "Your Heart", text: "Your ability to make anyone feel comfortable around you." },
+            { id: 31, category: "Your Heart", text: "How you always listen without judgment." },
+            { id: 32, category: "Your Heart", text: "Your generous spirit always giving to others." },
+            { id: 33, category: "Your Heart", text: "How you stand up for what is right." },
+            { id: 34, category: "Your Heart", text: "Your positive attitude towards challenges." },
+            { id: 35, category: "Your Heart", text: "How humble you remain despite being so amazing." },
+            { id: 36, category: "Your Heart", text: "Your loyalty and trustworthiness." },
+            { id: 37, category: "Your Heart", text: "How comforting your words are when I'm anxious." },
+            { id: 38, category: "Your Heart", text: "Your golden heart that sees goodness in everyone." },
+            { id: 39, category: "Your Heart", text: "How you remember small details about people." },
+            { id: 40, category: "Your Heart", text: "Your willingness to grow and learn together." },
+            { id: 41, category: "Your Heart", text: "How safe I feel opening my soul to you." },
+            { id: 42, category: "Your Heart", text: "Your sweet habit of checking up on me." },
+            { id: 43, category: "Your Heart", text: "How you celebrate my small victories like big ones." },
+            { id: 44, category: "Your Heart", text: "Your emotional depth and wisdom." },
+            { id: 45, category: "Your Heart", text: "How pure and real your intentions always are." },
+
+            // Little Things (46-75)
+            { id: 46, category: "Little Things", text: "The way you text me 'Good morning' and 'Goodnight'." },
+            { id: 47, category: "Little Things", text: "Our inside jokes that nobody else understands." },
+            { id: 48, category: "Little Things", text: "How you remember my favorite food orders perfectly." },
+            { id: 49, category: "Little Things", text: "The random cute emojis you send out of nowhere." },
+            { id: 50, category: "Little Things", text: "How you hold onto my arm when we walk together." },
+            { id: 51, category: "Little Things", text: "Your funny little happy dance when eating good food." },
+            { id: 52, category: "Little Things", text: "How you steal my sweaters because 'they smell like me'." },
+            { id: 53, category: "Little Things", text: "The cute voice you use when speaking to pets." },
+            { id: 54, category: "Little Things", text: "Our late night conversations that go on for hours." },
+            { id: 55, category: "Little Things", text: "How you squeeze my hand three times for 'I love you'." },
+            { id: 56, category: "Little Things", text: "The way you react to surprise gifts or snacks." },
+            { id: 57, category: "Little Things", text: "Your silly dance moves when music plays." },
+            { id: 58, category: "Little Things", text: "How you send me cute memes throughout the day." },
+            { id: 59, category: "Little Things", text: "The way you lean your head on my shoulder in cars." },
+            { id: 60, category: "Little Things", text: "How you always share your favorite bites of dessert." },
+            { id: 61, category: "Little Things", text: "Your competitive spirit during board or video games." },
+            { id: 62, category: "Little Things", text: "How you fix my collar or jacket when it's folded." },
+            { id: 63, category: "Little Things", text: "The way you say my name with affection." },
+            { id: 64, category: "Little Things", text: "How we can sit in total silence without awkwardness." },
+            { id: 65, category: "Little Things", text: "Your spontaneous ideas for fun dates." },
+            { id: 66, category: "Little Things", text: "How you get excited over little everyday things." },
+            { id: 67, category: "Little Things", text: "The cute way you sneeze." },
+            { id: 68, category: "Little Things", text: "How you always remind me to stay hydrated and eat well." },
+            { id: 69, category: "Little Things", text: "The warmth of your forehead kisses." },
+            { id: 70, category: "Little Things", text: "How you make mundane errands feel like exciting adventures." },
+            { id: 71, category: "Little Things", text: "Your habit of taking random cute selfies on my phone." },
+            { id: 72, category: "Little Things", text: "The cozy feeling of watching movies under blankets together." },
+            { id: 73, category: "Little Things", text: "How you listen attentively when I rant about my day." },
+            { id: 74, category: "Little Things", text: "Your gentle touch when resting your hand on mine." },
+            { id: 75, category: "Little Things", text: "Because just seeing your name pop up on my screen makes me smile." },
+
+            // Our Future / Togetherness (76-100)
+            { id: 76, category: "Our Future", text: "How easy it is to picture a lifetime with you." },
+            { id: 77, category: "Our Future", text: "The amazing adventures and trips we have yet to take." },
+            { id: 78, category: "Our Future", text: "How we inspire each other to be better human beings." },
+            { id: 79, category: "Our Future", text: "Knowing that whatever happens, we make an unbeatable team." },
+            { id: 80, category: "Our Future", text: "The cozy home we will build together one day." },
+            { id: 81, category: "Our Future", text: "Growing old alongside you and keeping our playful spirit." },
+            { id: 82, category: "Our Future", text: "How you bring stability and peace into my life." },
+            { id: 83, category: "Our Future", text: "Because you are not just my love, but my best friend." },
+            { id: 84, category: "Our Future", text: "How our future feels bright, safe, and full of joy." },
+            { id: 85, category: "Our Future", text: "The promise that I will always hold your hand through life." },
+            { id: 86, category: "Our Future", text: "How we can overcome any hardship together." },
+            { id: 87, category: "Our Future", text: "Because loving you is the easiest decision I make every day." },
+            { id: 88, category: "Our Future", text: "The memories we've made and the thousands left to create." },
+            { id: 89, category: "Our Future", text: "How you complete my world in ways I never knew I needed." },
+            { id: 90, category: "Our Future", text: "Knowing my heart is completely safe in your hands." },
+            { id: 91, category: "Our Future", text: "Because you make every place feel like home." },
+            { id: 92, category: "Our Future", text: "How you push me to reach for my dreams." },
+            { id: 93, category: "Our Future", text: "The unconditional acceptance you give me every day." },
+            { id: 94, category: "Our Future", text: "Because with you, every ordinary moment becomes extraordinary." },
+            { id: 95, category: "Our Future", text: "How my love for you grows deeper with each passing sunrise." },
+            { id: 96, category: "Our Future", text: "The comfort of knowing you truly know and accept the real me." },
+            { id: 97, category: "Our Future", text: "Because you are my greatest blessing and favorite thought." },
+            { id: 98, category: "Our Future", text: "How effortlessly you turned my world into something beautiful." },
+            { id: 99, category: "Our Future", text: "Because my heart beats faster every time I see you." },
+            { id: 100, category: "Our Future", text: "Simply because you are YOU, and I love every single bit of you!" }
+        ];
+
+        // --- 5 QUIZ QUESTIONS DATA ---
+        const quizQuestions = [
+            {
+                q: "When did I first realize you were someone extremely special?",
+                options: [
+                    "The very first second I laid eyes on your smile",
+                    "During our very first long, deep conversation",
+                    "When I saw how kind you are to everyone around you",
+                    "All of the above — I was captivated from day one!"
+                ],
+                correct: 3,
+                explanation: "It's true! Every moment with you confirmed you're one in a million! ❤️"
+            },
+            {
+                q: "What is my absolute favorite thing about spending time with you?",
+                options: [
+                    "How we can laugh until our stomachs hurt over silly things",
+                    "The cozy silence where we just feel comfortable together",
+                    "Having endless conversations about life, dreams, and everything",
+                    "Every single second spent with you is my favorite!"
+                ],
+                correct: 3,
+                explanation: "Correct! Time disappears whenever I am with you! ✨"
+            },
+            {
+                q: "How often do you cross my mind every single day?",
+                options: [
+                    "Only when my phone lights up",
+                    "Constantly from the moment I wake up to when I sleep",
+                    "About 100 times an hour",
+                    "You never cross my mind because you never leave it!"
+                ],
+                correct: 3,
+                explanation: "Spot on! You live permanently in my thoughts and heart! 💭"
+            },
+            {
+                q: "What is my biggest dream for our future together?",
+                options: [
+                    "Traveling the world and creating endless unforgettable memories",
+                    "Building a peaceful, happy home filled with warmth & laughter",
+                    "Supporting each other to achieve all our biggest goals",
+                    "All of these together, as long as I have you by my side!"
+                ],
+                correct: 3,
+                explanation: "Yes! Any future is bright as long as we're together! 🏡"
+            },
+            {
+                q: "Final Question: Who loves who more in this relationship?",
+                options: [
+                    "I love you more!",
+                    "You love me more!",
+                    "It's a tie — our love is limitless!",
+                    "I love you to infinity and beyond!"
+                ],
+                correct: 3,
+                explanation: "You win! My love for you reaches past infinity! 💖"
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let heartedSet = new Set();
+        let currentCategory = 'All';
+        let dodgeCount = 0;
+
+        // --- HERO DODGE BUTTON LOGIC ---
+        function dodgeButton() {
+            dodgeCount++;
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+
+            // Random movement within viewport
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 60) + 30;
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 60) + 30;
+
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+
+            // Expand Yes Button
+            const scale = 1 + Math.min(dodgeCount * 0.1, 0.8);
+            yesBtn.style.transform = `scale(${scale})`;
+
+            // Playful text responses
+            const texts = ["Are you sure? 😜", "Wrong choice! 😉", "Try again! ❤️", "Can't catch me!", "Just say YES! 🌹"];
+            noBtn.innerText = texts[Math.min(dodgeCount - 1, texts.length - 1)];
+        }
+
+        function acceptProposal() {
+            document.getElementById('noBtn').style.display = 'none';
+            document.getElementById('celebrationCard').classList.remove('hidden');
+            
+            // Full Screen Confetti
+            triggerConfettiBurst();
+        }
+
+        function triggerConfettiBurst() {
+            const duration = 3 * 1000;
+            const end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#f43f5e', '#ec4899', '#fb7185']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#f43f5e', '#ec4899', '#fb7185']
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        }
+
+        // --- REASONS GRID RENDERER ---
+        function renderReasons() {
+            const grid = document.getElementById('reasonsGrid');
+            grid.innerHTML = '';
+
+            const searchTerm = document.getElementById('reasonSearch').value.toLowerCase();
+
+            const filtered = reasonsData.filter(item => {
+                const matchesCat = (currentCategory === 'All' || item.category === currentCategory);
+                const matchesSearch = item.text.toLowerCase().includes(searchTerm) || item.id.toString().includes(searchTerm);
+                return matchesCat && matchesSearch;
+            });
+
+            document.getElementById('visibleCount').innerText = filtered.length;
+
+            filtered.forEach(item => {
+                const isHearted = heartedSet.has(item.id);
+                const card = document.createElement('div');
+                card.className = 'glass-card p-5 rounded-2xl flex flex-col justify-between space-y-3 hover:shadow-md transition border border-white/60 relative group';
+                
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                        <span class="px-2.5 py-1 bg-rose-100/70 text-rose-600 rounded-lg">Reason #${item.id}</span>
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400">${item.category}</span>
+                    </div>
+                    <p class="text-slate-700 text-sm font-medium leading-relaxed">${item.text}</p>
+                    <div class="flex justify-end pt-2">
+                        <button onclick="toggleHeart(${item.id})" class="text-lg transition transform active:scale-125 ${isHearted ? 'text-rose-500' : 'text-slate-300 hover:text-rose-400'}">
+                            <i class="fa-${isHearted ? 'solid' : 'regular'} fa-heart"></i>
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function toggleHeart(id) {
+            if (heartedSet.has(id)) {
+                heartedSet.delete(id);
+            } else {
+                heartedSet.add(id);
+            }
+            document.getElementById('heartedCount').innerText = heartedSet.size;
+            renderReasons();
+        }
+
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => {
+                if (btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All'))) {
+                    btn.className = 'cat-btn bg-rose-500 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition';
+                } else {
+                    btn.className = 'cat-btn bg-white/80 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition';
+                }
+            });
+            renderReasons();
+        }
+
+        function filterReasons() {
+            renderReasons();
+        }
+
+        function pickRandomReason() {
+            const randomItem = reasonsData[Math.floor(Math.random() * reasonsData.length)];
+            document.getElementById('modalCategory').innerText = `Reason #${randomItem.id} • ${randomItem.category}`;
+            document.getElementById('modalReasonText').innerText = `"${randomItem.text}"`;
+            
+            const modal = document.getElementById('reasonModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            confetti({ particleCount: 30, spread: 60, origin: { y: 0.5 } });
+        }
+
+        function closeReasonModal() {
+            const modal = document.getElementById('reasonModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // --- LOVE QUIZ LOGIC ---
+        let currentQuestionIdx = 0;
+        let score = 0;
+
+        function renderQuestion() {
+            if (currentQuestionIdx >= quizQuestions.length) {
+                showQuizResults();
+                return;
+            }
+
+            const qData = quizQuestions[currentQuestionIdx];
+            document.getElementById('questionNum').innerText = `Question ${currentQuestionIdx + 1} of ${quizQuestions.length}`;
+            document.getElementById('questionText').innerText = qData.q;
+            document.getElementById('quizProgressBar').style.width = `${((currentQuestionIdx + 1) / quizQuestions.length) * 100}%`;
+            document.getElementById('scoreDisplay').innerHTML = `<i class="fa-solid fa-star text-amber-400"></i> Score: ${score}`;
+
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 rounded-2xl bg-white/80 hover:bg-rose-50 border border-slate-200 text-left text-sm font-semibold text-slate-700 transition flex items-center justify-between group shadow-sm';
+                btn.innerHTML = `
+                    <span>${opt}</span>
+                    <i class="fa-solid fa-circle-chevron-right text-slate-300 group-hover:text-rose-500 transition"></i>
+                `;
+                btn.onclick = () => selectAnswer(idx);
+                container.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedIdx) {
+            const qData = quizQuestions[currentQuestionIdx];
+            if (selectedIdx === qData.correct) {
+                score += 20;
+            }
+            currentQuestionIdx++;
+            renderQuestion();
+        }
+
+        function showQuizResults() {
+            document.getElementById('quizContent').classList.add('hidden');
+            document.getElementById('quizResultCard').classList.remove('hidden');
+            document.getElementById('quizScoreMessage').innerText = `You scored ${score}%! You know my heart inside out. Every answer proves we are meant to be!`;
+            confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+        }
+
+        function resetQuiz() {
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById('quizResultCard').classList.add('hidden');
+            document.getElementById('quizContent').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        // --- AUDIO PLAYER TONE TOGGLE ---
+        const bgAudio = document.getElementById('bgAudio');
+        const musicToggle = document.getElementById('musicToggle');
+        const musicStatus = document.getElementById('musicStatus');
+        let isPlaying = false;
+
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                bgAudio.pause();
+                musicStatus.innerText = "Play Melody";
+                musicToggle.classList.remove('bg-rose-500', 'text-white');
+            } else {
+                bgAudio.play().then(() => {
+                    musicStatus.innerText = "Playing ♪";
+                    musicToggle.classList.add('bg-rose-500', 'text-white');
+                }).catch(() => {
+                    alert("Audio playback allowed after user interaction.");
+                });
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // --- BACKGROUND HEARTS CANVAS ANIMATION ---
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class FloatingHeart {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 80;
+                this.size = Math.random() * 10 + 6;
+                this.speedY = Math.random() * 1.2 + 0.4;
+                this.speedX = Math.sin(Math.random() * Math.PI * 2) * 0.4;
+                this.opacity = Math.random() * 0.4 + 0.2;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX;
+                if (this.y < -20) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = '#f43f5e';
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.bezierCurveTo(this.x - this.size / 2, this.y - this.size / 2, this.x - this.size, this.y + this.size / 3, this.x, this.y + this.size);
+                ctx.bezierCurveTo(this.x + this.size, this.y + this.size / 3, this.x + this.size / 2, this.y - this.size / 2, this.x, this.y);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const heartParticles = Array.from({ length: 35 }, () => new FloatingHeart());
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+            heartParticles.forEach(h => {
+                h.update();
+                h.draw();
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            renderReasons();
+            renderQuestion();
+            animateCanvas();
+        };
+    </script>
+</body>
+</html>
